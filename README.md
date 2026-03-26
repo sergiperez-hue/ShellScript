@@ -37,12 +37,12 @@ exit
 Una vez configurado sudoers, ejecuta el script principal como sysadmin:
 
 ```bash
-/home/sysadmin/Desktop/ShellScript/hola.sh
+/home/sysadmin/Desktop/ShellScript/1_instalacion_entorno_desarrollo.sh
 ```
 
 O con antecedentes:
 ```bash
-bash /home/sysadmin/Desktop/ShellScript/hola.sh
+bash /home/sysadmin/Desktop/ShellScript/1_instalacion_entorno_desarrollo.sh
 ```
 
 ---
@@ -82,7 +82,7 @@ bash /home/sysadmin/Desktop/ShellScript/hola.sh
 
 ## 🎯 Menú Principal
 
-Al ejecutar `hola.sh` verás un menú con opciones:
+Al ejecutar `1_instalacion_entorno_desarrollo.sh` verás un menú con opciones:
 
 ```
 1) Actualizar sistema
