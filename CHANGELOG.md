@@ -1,5 +1,21 @@
 # CHANGELOG - Instalación Entorno Desarrollo
 
+## [0.0.3] - 2026-03-27
+
+### Arreglado
+- **VS Code desde .deb oficial**: se utiliza descarga directa
+  (https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64)
+- Descarga en `/tmp/vscode-linux-x64.deb` y `sudo apt install -y` local
+- Añadida segunda tentativa con `sudo apt --fix-broken install` si hay dependencias
+- Elimina la dependencia de actualización de índice de `packages.microsoft.com`
+
+### Mejorado
+- Entfernung de configuración de repositorio APT Microsoft para minimizar fallos de repos
+- Proceso determinista y reproducible en entornos aislados
+- Se conservaron funciones de desinstalación y tests VM
+
+---
+
 ## [0.0.2] - 2026-03-27
 
 ### Agregado
