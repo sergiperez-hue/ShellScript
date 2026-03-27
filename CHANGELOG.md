@@ -1,5 +1,33 @@
 # CHANGELOG - Instalación Entorno Desarrollo
 
+## [0.0.4] - 2026-03-27
+
+### Arreglado
+- **Firefox instalación más confiable**: Implementa método oficial de Mozilla
+  - Descarga clave GPG desde `https://packages.mozilla.org/apt/repo-signing-key.gpg`
+  - Verifica fingerprint: `35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3`
+  - Configura repositorio official con firma digital
+  - Establece prioridad APT correcta para paquetes de Mozilla
+  - Evita instalación alternativa o desactualizada
+
+- **Desinstalación estable**: Protege integridad del sistema GNOME
+  - Elimina `gnome-keyring` de la lista de desinstalación
+  - Resuelve problema: GNOME no arranca después de desinstalar/reinstalar
+  - Mantiene `startx` funcionando correctamente tras reset de entorno de desarrollo
+  - Desinstalación selectiva: solo remueve herramientas de desarrollo, no de sistema
+
+### Mejorado
+- Proceso de instalación Firefox más seguro con verificación de GPG
+- Desinstalación más segura y predecible en entornos VM
+- Comentarios mejorados en código explicando protecciones de GNOME
+
+### Caso de Uso
+- Instalación Firefox desde fuente oficial certificada
+- Ciclos de instalación/desinstalación en VM sin desestabilizar GNOME
+- Reutilización de VM sin necesidad de restauración de snapshots
+
+---
+
 ## [0.0.3] - 2026-03-27
 
 ### Arreglado
