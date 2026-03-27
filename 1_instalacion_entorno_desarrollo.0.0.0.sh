@@ -4,16 +4,10 @@
 #                   DESARROLLO ENVIRONMENT SETUP DEBIAN 12
 #          Script interactivo para configurar entorno de desarrollo
 #
-# Versión: 0.0.2
+# Versión: 0.0.0
 # Fecha: 2026-03-27
 # Descripción: Setup inicial de desarrollo en Debian 12 con GNOME
 #              (Python, Node.js, Lua, TypeScript, Git, GitHub, VS Code)
-# Cambios en 0.0.2:
-#              - Agregado: Función completa de desinstalación de todos los paquetes
-#              - Agregado: Opción en menú para desinstalar (para pruebas en VM)
-# Cambios en 0.0.1:
-#              - Arreglo: Firefox ahora se instala desde repos de Mozilla
-#              - Arreglo: VS Code configuración de clave GPG corregida (issue #1)
 ################################################################################
 
 set -u  # Salir si hay variable no definida
@@ -207,25 +201,15 @@ install_build_tools() {
 
 install_firefox() {
     if command_exists firefox; then
-        FIREFOX_VERSION=$(firefox --version 2>/dev/null || echo "desconocida")
-        print_warning "Firefox ya está instalado: $FIREFOX_VERSION"
+        print_warning "Firefox ya está instalado"
         return 0
     fi
     
-    print_info "Instalando Firefox (ESR - última versión estable)..."
-    
-    # Agregar repositorio oficial de Mozilla
-    if ! grep -q "mozilla.debian" /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null; then
-        print_info "Agregando repositorio de Mozilla..."
-        echo "deb http://deb.debian.org/debian-mozilla/ bookworm-backports main" | sudo tee /etc/apt/sources.list.d/mozilla.list >/dev/null
-        curl https://keys.openpgp.org/vks/v1/by-fingerprint/A887DBA236B287F51D02D4AEBA3522EB4C27C3D2 | sudo tee /etc/apt/trusted.gpg.d/debian-mozilla.asc >/dev/null 2>&1
-        sudo apt update -qq >/dev/null 2>&1
-    fi
-    
-    if sudo apt install -y -qq firefox-esr; then
+    print_info "Instalando Firefox..."
+    if sudo apt install -y -qq firefox; then
         FIREFOX_VERSION=$(firefox --version 2>/dev/null || echo "Versión desconocida")
         print_success "Firefox instalado: $FIREFOX_VERSION"
-        log_message "Firefox instalado con última versión ESR"
+        log_message "Firefox instalado"
     else
         print_error "Error al instalar Firefox"
         return 1
@@ -252,36 +236,24 @@ install_git() {
 
 install_vscode() {
     if command_exists code; then
-        VSCODE_VERSION=$(code --version 2>/dev/null | head -1 || echo "versión desconocida")
-        print_warning "VS Code ya está instalado: $VSCODE_VERSION"
+        print_warning "VS Code ya está instalado"
         return 0
     fi
     
     print_info "Instalando Visual Studio Code..."
-    
-    # Descargar e instalar clave GPG de Microsoft
-    print_info "Configurando repositorio de Microsoft..."
-    if ! curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /usr/share/keyrings/microsoft-archive-keyring.gpg >/dev/null 2>&1; then
-        print_error "Error al descargar clave GPG de Microsoft"
-        return 1
-    fi
-    
-    # Agregar repositorio
-    echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-archive-keyring.gpg] https://packages.microsoft.com/repos/code stable main" | \
-        sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null 2>&1
-    
-    print_info "Actualizando índices de paquetes..."
-    if ! sudo apt update -qq >/dev/null 2>&1; then
-        print_error "Error al actualizar índices de paquetes"
-        return 1
-    fi
-    
-    if sudo apt install -y -qq code; then
-        VSCODE_VERSION=$(code --version 2>/dev/null | head -1 || echo "versión desconocida")
-        print_success "Visual Studio Code instalado: $VSCODE_VERSION"
-        log_message "VS Code instalado correctamente"
+    if sudo apt install -y -qq wget; then
+        wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add - >/dev/null 2>&1
+        echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-archive-keyring.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
+        sudo apt update -qq
+        if sudo apt install -y -qq code; then
+            print_success "Visual Studio Code instalado"
+            log_message "VS Code instalado"
+        else
+            print_error "Error al instalar VS Code"
+            return 1
+        fi
     else
-        print_error "Error al instalar VS Code"
+        print_error "Error al instalar dependencias de VS Code"
         return 1
     fi
 }
@@ -541,207 +513,6 @@ install_vscode_extensions() {
 }
 
 ################################################################################
-# FUNCIONES DE DESINSTALACIÓN (para pruebas y limpieza)
-################################################################################
-
-uninstall_firefox() {
-    if ! command_exists firefox; then
-        print_warning "Firefox no está instalado"
-        return 0
-    fi
-    
-    print_info "Desinstalando Firefox..."
-    if sudo apt remove -y -qq firefox-esr firefox; then
-        print_success "Firefox desinstalado"
-        log_message "Firefox desinstalado"
-    else
-        print_warning "Error al desinstalar Firefox (podría no estar instalado)"
-    fi
-}
-
-uninstall_git() {
-    if ! command_exists git; then
-        print_warning "Git no está instalado"
-        return 0
-    fi
-    
-    print_info "Desinstalando Git..."
-    if sudo apt remove -y -qq git; then
-        print_success "Git desinstalado"
-        log_message "Git desinstalado"
-    else
-        print_warning "Error al desinstalar Git"
-    fi
-}
-
-uninstall_vscode() {
-    if ! command_exists code; then
-        print_warning "VS Code no está instalado"
-        return 0
-    fi
-    
-    print_info "Desinstalando Visual Studio Code..."
-    if sudo apt remove -y -qq code; then
-        print_success "VS Code desinstalado"
-        log_message "VS Code desinstalado"
-        # Limpiar repositorio de VS Code
-        sudo rm -f /etc/apt/sources.list.d/vscode.list
-        sudo rm -f /usr/share/keyrings/microsoft-archive-keyring.gpg
-    else
-        print_warning "Error al desinstalar VS Code"
-    fi
-}
-
-uninstall_github_cli() {
-    if ! command_exists gh; then
-        print_warning "GitHub CLI no está instalado"
-        return 0
-    fi
-    
-    print_info "Desinstalando GitHub CLI..."
-    if sudo apt remove -y -qq gh; then
-        print_success "GitHub CLI desinstalado"
-        log_message "GitHub CLI desinstalado"
-        # Limpiar repositorio de GitHub CLI
-        sudo rm -f /etc/apt/sources.list.d/github-cli.list
-        sudo rm -f /usr/share/keyrings/githubcli-archive-keyring.gpg
-    else
-        print_warning "Error al desinstalar GitHub CLI"
-    fi
-}
-
-uninstall_python() {
-    if ! command_exists python3; then
-        print_warning "Python3 no está instalado"
-        return 0
-    fi
-    
-    print_info "Desinstalando Python 3..."
-    if sudo apt remove -y -qq python3 python3-pip python3-venv; then
-        print_success "Python 3 desinstalado"
-        log_message "Python 3 desinstalado"
-    else
-        print_warning "Error al desinstalar Python 3"
-    fi
-}
-
-uninstall_nodejs() {
-    if ! command_exists node; then
-        print_warning "Node.js no está instalado"
-        return 0
-    fi
-    
-    print_info "Desinstalando Node.js..."
-    if sudo apt remove -y -qq nodejs; then
-        print_success "Node.js desinstalado"
-        log_message "Node.js desinstalado"
-        # Limpiar repositorio de NodeSource
-        sudo rm -f /etc/apt/sources.list.d/nodesource.list
-    else
-        print_warning "Error al desinstalar Node.js"
-    fi
-}
-
-uninstall_lua() {
-    if ! command_exists lua; then
-        print_warning "Lua no está instalado"
-        return 0
-    fi
-    
-    print_info "Desinstalando Lua..."
-    if sudo apt remove -y -qq lua5.4; then
-        print_success "Lua desinstalado"
-        log_message "Lua desinstalado"
-    else
-        print_warning "Error al desinstalar Lua"
-    fi
-}
-
-uninstall_typescript() {
-    if ! command_exists tsc; then
-        print_warning "TypeScript no está instalado"
-        return 0
-    fi
-    
-    print_info "Desinstalando TypeScript..."
-    if sudo npm uninstall -g typescript >/dev/null 2>&1; then
-        print_success "TypeScript desinstalado"
-        log_message "TypeScript desinstalado"
-    else
-        print_warning "Error al desinstalar TypeScript"
-    fi
-}
-
-uninstall_all() {
-    print_header "DESINSTALACIÓN COMPLETA"
-    print_warning "ADVERTENCIA: Esto desinstalará TODOS los paquetes y herramientas"
-    echo ""
-    
-    if ! confirm "¿Estás COMPLETAMENTE seguro de que deseas continuar?"; then
-        print_info "Desinstalación cancelada"
-        return
-    fi
-    
-    echo ""
-    print_info "Iniciando desinstalación completa..."
-    
-    uninstall_vscode_extensions_cleanup
-    uninstall_firefox
-    uninstall_git
-    uninstall_vscode
-    uninstall_github_cli
-    uninstall_python
-    uninstall_nodejs
-    uninstall_lua
-    uninstall_typescript
-    uninstall_build_tools
-    
-    echo ""
-    print_header "LIMPIEZA FINAL"
-    
-    # Limpiar repositorios agregados
-    print_info "Limpiando repositorios adicionales..."
-    sudo rm -f /etc/apt/sources.list.d/mozilla.list
-    sudo rm -f /etc/apt/sources.list.d/vscode.list
-    sudo rm -f /etc/apt/sources.list.d/github-cli.list
-    sudo rm -f /etc/apt/sources.list.d/nodesource.list
-    sudo rm -f /usr/share/keyrings/mozilla-*.asc
-    sudo rm -f /usr/share/keyrings/microsoft-*.gpg
-    sudo rm -f /usr/share/keyrings/githubcli-*.gpg
-    print_success "Repositorios removidos"
-    
-    # Actualizar índices
-    print_info "Actualizando índices de paquetes..."
-    sudo apt update -qq >/dev/null 2>&1
-    
-    # Limpiar paquetes no necesarios
-    print_info "Limpiando paquetes no necesarios..."
-    sudo apt autoremove -y -qq >/dev/null 2>&1
-    sudo apt autoclean -qq >/dev/null 2>&1
-    
-    print_success "Desinstalación completa finalizada"
-    log_message "=== DESINSTALACIÓN COMPLETA FINALIZADA ==="
-}
-
-uninstall_build_tools() {
-    print_info "Desinstalando herramientas de compilación..."
-    if sudo apt remove -y -qq build-essential curl wget git-lfs gnome-keyring; then
-        print_success "Herramientas de compilación desinstaladas"
-        log_message "Build-tools desinstalados"
-    else
-        print_warning "Error al desinstalar herramientas de compilación"
-    fi
-}
-
-uninstall_vscode_extensions_cleanup() {
-    if command_exists code; then
-        print_info "Limpiando extensiones de VS Code..."
-        # Las extensiones se borran automáticamente con VS Code
-        print_success "Extensiones limpiadas"
-    fi
-}
-
-################################################################################
 # MENÚ INTERACTIVO PRINCIPAL
 ################################################################################
 
@@ -784,7 +555,6 @@ main_menu() {
     # Menú de selección
     print_header "SELECCIONA LO QUE DESEAS INSTALAR"
     
-    echo "═══ INSTALACIÓN =══"
     echo "1) Actualizar sistema (apt update + upgrade)"
     echo "2) Instalar herramientas base (build-tools, curl, wget, etc.)"
     echo "3) Instalar Firefox"
@@ -799,13 +569,6 @@ main_menu() {
     echo "12) Crear/preparar repositorio Development"
     echo "13) Instalar extensiones de VS Code"
     echo "14) INSTALAR TODO (opción rápida)"
-    echo ""
-    echo "═══ DESINSTALACIÓN (para pruebas) =══"
-    echo "15) Desinstalar Firefox"
-    echo "16) Desinstalar VS Code"
-    echo "17) Desinstalar TODOS los paquetes (para limpiar VM)"
-    echo ""
-    echo "═══ CONTROL =══"
     echo "0) Salir"
     echo ""
     
@@ -828,9 +591,6 @@ main_menu() {
             12) setup_development_repo ;;
             13) install_vscode_extensions ;;
             14) install_all ;;
-            15) uninstall_firefox ;;
-            16) uninstall_vscode ;;
-            17) uninstall_all ;;
             0) 
                 print_success "Script finalizado"
                 show_summary

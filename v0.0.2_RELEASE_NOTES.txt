@@ -1,0 +1,221 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    RELEASE NOTES - v0.0.2
+                    Development Environment Setup
+                    Para Debian 12 con GNOME
+═══════════════════════════════════════════════════════════════════════════════
+
+📅 FECHA: 2026-03-27
+👤 AUTOR: sysadmin
+🏷️  VERSIÓN: 0.0.2
+📊 STATUS: ✅ COMPROBADO SINTAXIS | ⚠️  TESTING PENDIENTE EN VM
+
+───────────────────────────────────────────────────────────────────────────────
+🎯 OBJETIVO PRINCIPAL
+───────────────────────────────────────────────────────────────────────────────
+
+Versión de testing que permite:
+1. Instalación completa de herramientas de desarrollo
+2. Desinstalación COMPLETA para resetear máquina virtual
+3. Ciclos de prueba instalación/desinstalación sin residuos
+
+Se agregó especialmente para máquinas virtuales de laboratorio.
+
+───────────────────────────────────────────────────────────────────────────────
+✨ CAMBIOS PRINCIPALES EN v0.0.2
+───────────────────────────────────────────────────────────────────────────────
+
+AGREGADO:
+├── 11 nuevas funciones de desinstalación
+├── 3 nuevas opciones de menú (15, 16, 17)
+├── Limpieza automática de repositorios
+├── Limpieza automática de claves GPG
+├── Doble confirmación de seguridad en desinstalación
+└── TESTING.md con guía de ciclos de prueba
+
+MEJORADO:
+├── Menú organizado en secciones (Instalación, Desinstalación, Control)
+├── Mejor logging de todas las operaciones
+└── Validación de cada paso de desinstalación
+
+───────────────────────────────────────────────────────────────────────────────
+🚀 INSTALACIÓN / DESINSTALACIÓN
+───────────────────────────────────────────────────────────────────────────────
+
+OPCIÓN 14 - INSTALAR TODO:
+  • Firefox ESR desde repositorio Mozilla
+  • Git con configuración SSH
+  • Visual Studio Code desde Microsoft repos
+  • GitHub CLI
+  • Build essentials y herramientas
+  • Python 3 + pip
+  • Node.js LTS + npm
+  • Lua 5.4
+  • TypeScript global
+  • Extensiones VS Code (Copilot, Python, etc.)
+  • Configuración GitHub (SSH keys)
+  • Repositorio Development local
+
+OPCIÓN 17 - DESINSTALAR TODO (NUEVO):
+  • Desinstala Firefox y repos Mozilla
+  • Desinstala Git
+  • Desinstala VS Code y repos Microsoft
+  • Desinstala GitHub CLI y repos GitHub
+  • Desinstala herramientas de compilación
+  • Desinstala Python, Node.js, Lua, TypeScript
+  • Limpia todos los repositorios agregados
+  • Ejecuta apt autoremove y apt autoclean
+  • ⚠️  Requiere DOBLE confirmación de seguridad
+
+───────────────────────────────────────────────────────────────────────────────
+📋 DESINSTALACIÓN INDIVIDUAL (NUEVAS OPCIONES)
+───────────────────────────────────────────────────────────────────────────────
+
+Opción 15: Desinstala Firefox
+  • sudo apt remove -y firefox-esr
+  • Limpia repositorio Mozilla
+
+Opción 16: Desinstala VS Code
+  • sudo apt remove -y code
+  • Limpia repositorio Microsoft
+  • Elimina claves GPG de Microsoft
+
+───────────────────────────────────────────────────────────────────────────────
+✅ VALIDACIONES REALIZADAS
+───────────────────────────────────────────────────────────────────────────────
+
+✓ Sintaxis bash completa verificada (bash -n)
+✓ Todas las funciones de desinstalación revisadas lógicamente
+✓ Manejo de errores en cada etapa
+✓ Confirmación doble en operaciones peligrosas
+✓ Limpieza de repositorios incluida
+✓ Limpieza de paquetes con apt autoremove
+✓ Limpieza de paquetes con apt autoclean
+
+⚠️  NO EJECUTADO EN MAQUINA REAL:
+    Las pruebas se realizarán en máquina virtual separada
+    como se indicó en las instrucciones
+
+───────────────────────────────────────────────────────────────────────────────
+🧪 CASO DE USO RECOMENDADO (TESTING)
+───────────────────────────────────────────────────────────────────────────────
+
+En máquina virtual:
+
+1. PRIMER CICLO - INSTALACIÓN:
+   $ ./1_instalacion_entorno_desarrollo.0.0.2.sh
+   Opción: 14 (Instalar TODO)
+   ✓ Verificar que todo se instala correctamente
+   ✓ Probar Firefox, VS Code, Git, etc.
+
+2. SEGUNDO CICLO - DESINSTALACIÓN:
+   $ ./1_instalacion_entorno_desarrollo.0.0.2.sh
+   Opción: 17 (Desinstalar TODOS)
+   ✓ Confirma 2 veces
+   ✓ Verifica que se desinstala completamente
+
+3. TERCER CICLO - REINSTALACIÓN:
+   $ ./1_instalacion_entorno_desarrollo.0.0.2.sh
+   Opción: 14 (Instalar TODO nuevamente)
+   ✓ Comprueba que vuelve a funcionar
+
+4. VALIDACIÓN FINAL:
+   $ firefox --version  # Debe fallar si está desinstalado
+   $ code --version     # Debe fallar si está desinstalado
+   $ python3 --version  # Debe fallar si está desinstalado
+
+───────────────────────────────────────────────────────────────────────────────
+📊 ESTADÍSTICAS
+───────────────────────────────────────────────────────────────────────────────
+
+Líneas de código:       922
+Funciones totales:     39
+Tamaño:                30K
+Funciones instalación: 14
+Funciones de limpieza: 11
+Opciones de menú:      17
+
+───────────────────────────────────────────────────────────────────────────────
+🔒 MEDIDAS DE SEGURIDAD
+───────────────────────────────────────────────────────────────────────────────
+
+✓ Doble confirmación en uninstall_all()
+✓ Validación de comando antes de opción 17
+✓ Logging completo de todas las operaciones
+✓ Mensajes de advertencia claros
+✓ No se ejecuta en máquina de producción (instrucciones)
+✓ Git safe mode activado en repositorios
+
+Recomendaciones:
+- SOLO usar en máquinas virtuales
+- Crear snapshot ANTES de probar desinstalación
+- Validar en VM separada (NO en máquina actual)
+- Leer TESTING.md antes de ejecutar ciclos
+
+───────────────────────────────────────────────────────────────────────────────
+📚 ARCHIVOS RELACIONADOS
+───────────────────────────────────────────────────────────────────────────────
+
+README.md              - Guía principal de uso
+TESTING.md             - Guía detallada de ciclos de testing ⭐ NUEVO
+CHANGELOG.md           - Historial de versiones
+VERSION                - Información de versión actual
+quickstart.sh          - Launcher rápido
+versionador.sh         - Herramienta para crear nuevas versiones
+
+───────────────────────────────────────────────────────────────────────────────
+🚀 VERSIONES DISPONIBLES
+───────────────────────────────────────────────────────────────────────────────
+
+v0.0.0 (22K) - Release inicial base
+v0.0.1 (24K) - Fixes Firefox ESR y VS Code GPG
+v0.0.2 (30K) - Desinstalación completa + Testing ⭐ ACTUAL
+
+───────────────────────────────────────────────────────────────────────────────
+⚠️  DISCLAIMER IMPORTANTE
+───────────────────────────────────────────────────────────────────────────────
+
+Esta versión está diseñada ÚNICAMENTE para:
+✓ Máquinas virtuales de prueba/laboratorio
+✓ Ciclos de testing instalación/desinstalación
+✓ Desarrollo y validación de herramientas
+
+NO DEBE USARSE EN:
+✗ Sistemas de producción
+✗ Máquinas reales de trabajo
+✗ Servidores en producción
+
+Se recomienda:
+→ Ejecutar en VM con snapshots
+→ Probar primero en entorno separado
+→ Leer TESTING.md antes de inicio
+→ Mantener backup antes de desinstalar
+
+───────────────────────────────────────────────────────────────────────────────
+📞 REFERENCIA RÁPIDA
+───────────────────────────────────────────────────────────────────────────────
+
+USAR QUICK START (RECOMENDADO):
+$ cd /home/sysadmin/Desktop/ShellScript
+$ ./quickstart.sh
+
+USAR DIRECTAMENTE:
+$ ./1_instalacion_entorno_desarrollo.0.0.2.sh
+
+VER LOGS:
+$ cat ~/setup_development.log
+
+VER VERSIÓN ACTUAL:
+$ cat VERSION
+
+───────────────────────────────────────────────────────────────────────────────
+✅ STATUS FINAL: LISTO PARA TESTING EN MÁQUINA VIRTUAL
+
+Próximas versiones (propuestas):
+  • v0.1.0 - Desinstalaciones selectivas por herramienta
+  • v0.2.0 - Integración con snapshots de VM
+  • v1.0.0 - GUI interactiva (Yad/Zenity)
+
+═══════════════════════════════════════════════════════════════════════════════
+Documento generado: 2026-03-27
+Autor: sysadmin
+═══════════════════════════════════════════════════════════════════════════════

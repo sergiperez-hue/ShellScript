@@ -5,9 +5,45 @@ Script interactivo para configurar un entorno completo de desarrollo en Debian 1
 ## 📋 Contenido
 
 - **1_instalacion_entorno_desarrollo.sh** → Script unificado (root o sysadmin)
+- **1_instalacion_entorno_desarrollo.0.0.0.sh** → Release v0.0.0 (stable)
+- **versionador.sh** → Herramienta para crear nuevas versiones
+- **VERSION** → Archivo con información de versión actual
+- **CHANGELOG.md** → Historial de cambios y roadmap
 - **setup_sudoers.sh** → Legacy / auxiliar (opcional)
 - **instalacion_visual_studio_code_v0.sh** → Legacy / versión anterior de menú
 - **README.md** → Este archivo
+
+---
+
+## 📦 Sistema de Versionado
+
+Este proyecto usa **versionado semántico (SemVer)**:
+
+### Estructura
+```
+1_instalacion_entorno_desarrollo.{MAJOR}.{MINOR}.{PATCH}.sh
+```
+
+- **MAJOR**: Cambios significativos (1.0.0, 2.0.0)
+- **MINOR**: Nuevas características compatibles (0.1.0, 0.2.0)
+- **PATCH**: Correcciones de bugs (0.0.1, 0.0.2)
+
+### Archivos de Versión
+- `1_instalacion_entorno_desarrollo.sh` → Rama principal (development)
+- `1_instalacion_entorno_desarrollo.0.0.0.sh` → Release estable v0.0.0
+- `CHANGELOG.md` → Historial completo de versiones
+- `VERSION` → Info rápida de versión actual
+
+### Crear Nueva Versión (para maintainers)
+
+```bash
+# Opción 1: Usar el versionador (recomendado)
+/home/sysadmin/Desktop/ShellScript/versionador.sh
+
+# Opción 2: Manual
+cp 1_instalacion_entorno_desarrollo.sh 1_instalacion_entorno_desarrollo.0.1.0.sh
+# Edita CHANGELOG.md para documentar cambios
+```
 
 ---
 
